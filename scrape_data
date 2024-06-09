@@ -1,0 +1,27 @@
+import requests
+from bs4 import BeautifulSoup
+
+class CoinMarketCap:
+    @staticmethod
+    def make_request(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
+        return None
+
+    @staticmethod
+    def scrape_data(coin):
+        url = f"https://coinmarketcap.com/currencies/{coin}/"
+        html_content = CoinMarketCap.make_request(url)
+        if html_content:
+            soup = BeautifulSoup(html_content, 'html.parser')
+
+            # Example scraping logic; modify as needed based on CoinMarketCap website structure
+            price_element = soup.find('div', class_='priceValue')
+            price = price_element.text.strip() if price_element else 'N/A'
+
+            market_cap_element = soup.find('div', class_='statsValue')
+            market_cap = market_cap_element.text.strip() if market_cap_element else 'N/A'
+
+            return {'coin': coin, 'price': price, 'market_cap': market_cap}
+        return None
